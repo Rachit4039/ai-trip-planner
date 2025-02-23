@@ -4,26 +4,27 @@ import './index.css'
 import App from './App.jsx'
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom'
 import CreateTrip from './create-trip'
-import Header from './components/custom/Header' // Uppercase 'Header'
+import Header from './components/custom/Header' // ✅ Correct import
+import { Toaster } from 'sonner'
 
 const Layout = () => (
   <>
-    <Header />  {/* Use Uppercase Here */}
+    <Header />  {/* ✅ Correct JSX syntax */}
     <Outlet />
   </>
 )
 
 const router = createBrowserRouter([
   {
-    element: <Layout />, // Include Layout to show Header on all pages
+    element: <Layout />, // ✅ Layout ensures Header is shown on all pages
     children: [
       {
         path: '/',
-        element: <App/>
+        element: <App />
       },
       {
         path: '/create-trip',
-        element:<CreateTrip/>
+        element: <CreateTrip />
       }
     ]
   }
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+    <Toaster />  {/* ✅ Toaster is placed correctly */}
     <RouterProvider router={router} />
   </StrictMode>
 )
