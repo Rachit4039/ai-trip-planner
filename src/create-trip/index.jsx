@@ -24,11 +24,17 @@ function CreateTrip() {
   }, [formData]);
 
 
-  const onGenerateTrip=async()=>{
-    if(formData?.noOfDays>5&& !formData?.budget ||!formData?.traveler ){
-      toast("Please Fill all details");
-      return;
-    }
+// <<<<<<< rachit
+//   const onGenerateTrip=()=>{
+//     if (!formData?.location || !formData?.budget || !formData?.traveler || !formData?.noOfDays) {
+
+// =======
+//   const onGenerateTrip=async()=>{
+//     if(formData?.noOfDays>5&& !formData?.budget ||!formData?.traveler ){
+// >>>>>>> master
+//       toast("Please Fill all details");
+//       return;
+//     }
     
 
 
