@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import GooglePlacesAutocomplete from 'react-google-autocomplete';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { AI_PROMPT } from '@/constants/options';
+import { chatSession } from '@/service/AIModel';
 
 function CreateTrip() {
   const [place, setPlace] = useState('');
@@ -22,20 +24,37 @@ function CreateTrip() {
   }, [formData]);
 
 
-  const onGenerateTrip=()=>{
-    if (!formData?.location || !formData?.budget || !formData?.traveler || !formData?.noOfDays) {
+// <<<<<<< rachit
+//   const onGenerateTrip=()=>{
+//     if (!formData?.location || !formData?.budget || !formData?.traveler || !formData?.noOfDays) {
 
-      toast("Please Fill all details");
-      return;
-    }
-
-    console.log(formData);
+// =======
+//   const onGenerateTrip=async()=>{
+//     if(formData?.noOfDays>5&& !formData?.budget ||!formData?.traveler ){
+// >>>>>>> master
+//       toast("Please Fill all details");
+//       return;
+//     }
     
+
+
+   const FINAL_PROMPT=AI_PROMPT
+   .replace('{location}',formData?.location)
+   .replace('{totalDays}',formData?.noOfDays)
+   .replace('{traveler}',formData?.traveler)
+   .replace('{budget}',formData?.budget)
+   .replace('{totalDays}',formData?.noOfDays)
+
+   console.log(FINAL_PROMPT);
+
+   const result = await chatSession.sendMessage(FINAL_PROMPT);
+
+   console.log(result?.response?.text()); 
   }
   return (
-    <div className='min-h-screen w-screen flex justify-center bg-gray-100 pt-20'>
-      <div className='w-full max-w-4xl px-5 py-10 bg-white shadow-lg rounded-lg'>
-        <h2 className='font-bold text-3xl'>Tell us your travel preferences 🏕️🌴</h2>
+    <div className="min-h-screen w-screen flex justify-center bg-white pt-10 ">
+      <div className='w-full max-w-6xl px-5 py-10 bg-white-100 rounded-lg '>
+        <h2 className='font-bold text-3xl text-blue-500'>Tell us your travel preferences 🏕️🌴</h2>
         <p className='mt-3 text-gray-500 text-xl'>
           Just provide basic information, and our trip planner will generate a customized itinerary based on your preferences.
         </p>
@@ -43,38 +62,42 @@ function CreateTrip() {
         <div className='mt-20 flex flex-col gap-9'>
           {/* Destination Selection */}
           <div>
-            <h2 className='text-xl my-3 font-medium'>What is Your Destination?</h2>
+            <h2 className='text-xl my-3 font-medium text-blue-500'>What is Your Destination?</h2>
             <GooglePlacesAutocomplete
-              className='w-full border border-gray-300 rounded-lg p-2 text-lg'
-              apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
-              onPlaceSelected={(place) => {
-                setPlace(place.formatted_address);
-                handleInputChange('location', place.formatted_address); // ✅ Fixed issue
-              }}
-              options={{
-                types: ['(cities)'],
-              }}
-            />
+  className='w-full border-2 border-blue-400 rounded-lg p-2 text-lg bg-blue-200 text-blue-600'
+  apiKey={import.meta.env.VITE_GOOGLE_PLACE_API_KEY}
+  onPlaceSelected={(place) => {
+    if (!place || !place.formatted_address) {
+      console.error("Invalid place selected:", place);
+      return;
+    }
+    setPlace(place.formatted_address);
+    handleInputChange('location', place.formatted_address);
+  }}
+  options={{
+    types: ['(cities)'],
+  }}
+/>
           </div>
 
           {/* Trip Duration */}
           <div>
-            <h2 className='text-xl my-3 font-medium'>How many days are you planning your trip?</h2>
+            <h2 className='text-xl my-3 font-medium text-blue-500 '>How many days are you planning your trip?</h2>
             <input
               type="number"
               placeholder='Ex: 3'
-              className='w-full border border-gray-300 rounded-lg p-2 text-lg'
+              className='w-full border-2 border-blue-400 rounded-lg p-2 text-lg bg-blue-200 text-blue-600'
               onChange={(e) => handleInputChange('noOfDays', e.target.value)} // ✅ Stores data correctly
             />
           </div>
 
           {/* Travel Companion Selection */}
           <div>
-            <h2 className='text-xl my-3 font-medium'>Who do you plan on traveling with on your next adventure?</h2>
-            <div className='grid grid-cols-3 gap-5 mt-5 cursor-pointer'>
+            <h2 className='text-xl my-3 font-medium text-blue-600'>Who do you plan on traveling with on your next adventure?</h2>
+            <div className='grid grid-cols-3 gap-5 mt-5 cursor-pointer text-blue-700'>
               {SelectTravelsList.map((item, index) => (
                 <div key={index} 
-                     className={`p-4 border rounded-lg hover:shadow-lg cursor-pointer ${
+                     className={`p-4 border-2 border-blue-300 rounded-lg hover:shadow-lg cursor-pointer ${
                        formData?.traveler === item.people ? "shadow-lg border-black" : ""
                      }`}
                      onClick={() => handleInputChange('traveler', item.people)} // ✅ Saves selection
@@ -91,8 +114,8 @@ function CreateTrip() {
 
           {/* Budget Selection */}
           <div>
-            <h2 className='cursor-pointer text-xl my-3 font-medium'>What is your Budget?</h2>
-            <div className='grid grid-cols-3 gap-5 mt-5'>
+            <h2 className='cursor-pointer text-xl my-3 font-medium text-blue-600'>What is your Budget?</h2>
+            <div className='grid grid-cols-3 gap-5 mt-5 text-blue-700'>
               {SelectBudgetOptions.map((item, index) => (
                 <div key={index} 
                      className={`p-4 border rounded-lg hover:shadow-lg cursor-pointer ${
@@ -111,8 +134,8 @@ function CreateTrip() {
           </div>
 
           {/* Submit Button */}
-          <div className='my-10 flex justify-end'>
-            <Button onClick={onGenerateTrip}>
+          <div className='my-10 flex justify-end '>
+            <Button className="bg-blue-700" onClick={onGenerateTrip}>
               Generate Trip
             </Button>
           </div>
